@@ -1,5 +1,7 @@
 package recfun
 
+import scala.annotation.switch
+
 object RecFun extends RecFunInterface:
 
   def main(args: Array[String]): Unit =
@@ -21,31 +23,27 @@ object RecFun extends RecFunInterface:
   /**
    * Exercise 2
    */
-  def balance(chars: List[Char]): Boolean =
-    def difference(acc: Int, ch: List[Char]): Int =
-      val head = ch.head
-      val tail = ch.tail
-      val isLeft = head == '('
-      val isRight = head == ')'
-      val notEmptyTail = tail.nonEmpty
-      if acc == 1 then -1
-      else if !isLeft && !isRight then
-        if notEmptyTail then difference(acc, tail)
-        else acc
-      else if isLeft then
-        if notEmptyTail then difference(acc - 1, tail)
-        else acc - 1
-      else if notEmptyTail then difference(acc + 1, tail)
-        else acc + 1
+  def balance(chars: List[Char]): Boolean = {
+  def difference(acc: Int, chars: List[Char]): Boolean =
+    if chars.isEmpty then acc == 0
+    else
+      if chars.head == ')' && acc == 0 then return false
+      val newAcc: Int =
+        chars.head match
+          case '(' => acc + 1
+          case ')' => acc - 1
+          case _ => acc
+      difference(newAcc, chars.tail)
 
-    difference(0, chars) == 0
+  difference(0, chars)
+}
 
 
   /**
    * Exercise 3
    */
   def countChange(money: Int, coins: List[Int]): Int =
-    if money > 0 && !coins.isEmpty then
+    if money > 0 && coins.nonEmpty then
       countChange(money, coins.tail) + countChange(money - coins.head, coins)
     else if money == 0 then 1
       else 0
